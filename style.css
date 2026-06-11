@@ -1,12 +1,27 @@
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: Arial, sans-serif;
   background: #080c14;
   color: white;
   text-align: center;
 }
 
+.fundo-pagina {
+  position: fixed;
+  inset: 0;
+  background-image: url("assets/fundodapágina.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
 main {
+  position: relative;
+  z-index: 1;
   max-width: 900px;
   margin: auto;
   padding: 20px;

@@ -28,10 +28,28 @@ let gameState = "inicio";
 let score = 0;
 let nomeAtual = "";
 let salvouPontuacao = false;
+let bonusVelocidadeAliens = 0;
+let ultimoNivelPontuacao = 0;
 
 let nave;
 let aliens = [];
 let lasers = [];
+let explosoes = [];
+
+let imgNave;
+let imgAliens = [];
+let imgTiros = [];
+let imgExplosoes = [];
+let imgSpace = [];
+
+const TAMANHO_JOGO = 500;
+const BG_FRAME_INTERVAL = 3;
+const TIRO_LARGURA = 4;
+const TIRO_ALTURA = 25;
+const TIRO_ESCALA = 1.65;
+const PONTOS_POR_NIVEL = 10;
+const ALIEN_VELOCIDADE_BONUS = 0.05;
+const ALIEN_VELOCIDADE_BASE = 3;
 
 let telaInicio;
 let nomeInicial;
@@ -65,13 +83,33 @@ window.addEventListener("gamepaddisconnected", function () {
   }
 });
 
+window.preload = function () {
+  imgNave = loadImage("assets/nave.png");
+
+  for (let i = 1; i <= 3; i++) {
+    imgAliens.push(loadImage("assets/alien" + i + ".png"));
+  }
+
+  for (let i = 1; i <= 4; i++) {
+    imgTiros.push(loadImage("assets/tiro" + i + ".png"));
+  }
+
+  for (let i = 0; i <= 5; i++) {
+    imgExplosoes.push(loadImage("assets/explosao" + i + ".png"));
+  }
+
+  for (let i = 1; i <= 5; i++) {
+    imgSpace.push(loadImage("assets/space" + i + ".png"));
+  }
+};
+
 window.setup = function () {
-  let canvas = createCanvas(400, 400);
+  let canvas = createCanvas(TAMANHO_JOGO, TAMANHO_JOGO);
   canvas.parent("game-container");
 
   nave = {
-    x: 200,
-    y: 340,
+    x: width / 2,
+    y: height * 0.85,
     velocidade: 6
   };
 
@@ -102,21 +140,21 @@ window.setup = function () {
 };
 
 window.draw = function () {
-  background(10, 10, 30);
-
-  desenharEstrelas();
+  desenharFundo();
   desenharTexto();
 
   if (gameState === "jogando") {
     controlarNave();
     atualizarLasers();
     atualizarAliens();
+    atualizarExplosoes();
     verificarColisoes();
   }
 
   desenharNave();
   desenharLasers();
   desenharAliens();
+  desenharExplosoes();
 };
 
 function iniciarJogo() {
@@ -130,11 +168,13 @@ function iniciarJogo() {
   nomeAtual = nome;
   gameState = "jogando";
   score = 0;
+  resetarDificuldade();
   salvouPontuacao = false;
   lasers = [];
+  explosoes = [];
 
-  nave.x = 200;
-  nave.y = 340;
+  nave.x = width / 2;
+  nave.y = height * 0.85;
 
   criarAliens();
 
@@ -144,21 +184,37 @@ function iniciarJogo() {
 
 function criarAliens() {
   aliens = [
-    { x: 40, y: -40, tamanho: 35, velocidade: 4 },
-    { x: 200, y: -100, tamanho: 35, velocidade: 5 },
-    { x: 340, y: -180, tamanho: 35, velocidade: 3 }
+    { x: width * 0.1, y: -height * 0.2, tamanho: 35, velocidadeBase: ALIEN_VELOCIDADE_BASE, tipo: 0 },
+    { x: width * 0.5, y: -height * 0.45, tamanho: 35, velocidadeBase: ALIEN_VELOCIDADE_BASE, tipo: 1 },
+    { x: width * 0.85, y: -height * 0.7, tamanho: 35, velocidadeBase: ALIEN_VELOCIDADE_BASE, tipo: 2 }
   ];
 }
 
-function desenharEstrelas() {
-  fill(255);
-  noStroke();
+function resetarDificuldade() {
+  bonusVelocidadeAliens = 0;
+  ultimoNivelPontuacao = 0;
+}
 
-  for (let i = 0; i < 30; i++) {
-    let x = (i * 53) % width;
-    let y = (frameCount * 2 + i * 71) % height;
-    circle(x, y, 2);
+function atualizarDificuldade() {
+  let nivelAtual = floor(score / PONTOS_POR_NIVEL);
+
+  if (nivelAtual > ultimoNivelPontuacao) {
+    bonusVelocidadeAliens += (nivelAtual - ultimoNivelPontuacao) * ALIEN_VELOCIDADE_BONUS;
+    ultimoNivelPontuacao = nivelAtual;
   }
+}
+
+function velocidadeAlienAtual(velocidadeBase) {
+  return velocidadeBase + bonusVelocidadeAliens;
+}
+
+function desenharFundo() {
+  if (imgSpace.length === 0) {
+    return;
+  }
+
+  let frameIndex = floor(frameCount / BG_FRAME_INTERVAL) % imgSpace.length;
+  image(imgSpace[frameIndex], 0, 0, width, height);
 }
 
 function desenharTexto() {
@@ -247,24 +303,15 @@ function atirarLaser() {
   lasers.push({
     x: nave.x,
     y: nave.y - 25,
-    largura: 6,
-    altura: 20,
-    velocidade: 7
+    velocidade: 7,
+    frameOffset: frameCount
   });
 }
 
 function desenharNave() {
-  fill("#ff8c00");
-  noStroke();
-
-  triangle(
-    nave.x, nave.y - 25,
-    nave.x - 25, nave.y + 20,
-    nave.x + 25, nave.y + 20
-  );
-
-  fill("#38bdf8");
-  circle(nave.x, nave.y, 14);
+  imageMode(CENTER);
+  image(imgNave, nave.x, nave.y, 50, 50);
+  imageMode(CORNER);
 }
 
 function atualizarLasers() {
@@ -278,17 +325,20 @@ function atualizarLasers() {
 }
 
 function desenharLasers() {
-  fill("#22c55e");
-  noStroke();
+  imageMode(CENTER);
 
   for (let laser of lasers) {
-    rect(laser.x - 3, laser.y, laser.largura, laser.altura, 5);
+    let frameIndex = floor((frameCount + laser.frameOffset) / 3) % imgTiros.length;
+    let img = imgTiros[frameIndex];
+    image(img, laser.x, laser.y, TIRO_LARGURA * TIRO_ESCALA, TIRO_ALTURA * TIRO_ESCALA);
   }
+
+  imageMode(CORNER);
 }
 
 function atualizarAliens() {
   for (let alien of aliens) {
-    alien.y += alien.velocidade;
+    alien.y += velocidadeAlienAtual(alien.velocidadeBase);
 
     if (alien.y > height + 30) {
       resetarAlien(alien);
@@ -297,15 +347,34 @@ function atualizarAliens() {
 }
 
 function desenharAliens() {
-  for (let alien of aliens) {
-    fill("#6b21a8");
-    noStroke();
-    ellipse(alien.x, alien.y, alien.tamanho, alien.tamanho);
+  imageMode(CENTER);
 
-    fill("#facc15");
-    circle(alien.x - 7, alien.y - 4, 6);
-    circle(alien.x + 7, alien.y - 4, 6);
+  for (let alien of aliens) {
+    image(imgAliens[alien.tipo], alien.x, alien.y, alien.tamanho, alien.tamanho);
   }
+
+  imageMode(CORNER);
+}
+
+function atualizarExplosoes() {
+  for (let i = explosoes.length - 1; i >= 0; i--) {
+    explosoes[i].frame++;
+
+    if (explosoes[i].frame >= imgExplosoes.length) {
+      explosoes.splice(i, 1);
+    }
+  }
+}
+
+function desenharExplosoes() {
+  imageMode(CENTER);
+
+  for (let explosao of explosoes) {
+    let img = imgExplosoes[explosao.frame];
+    image(img, explosao.x, explosao.y, 50, 50);
+  }
+
+  imageMode(CORNER);
 }
 
 function verificarColisoes() {
@@ -318,8 +387,10 @@ function verificarColisoes() {
     for (let i = lasers.length - 1; i >= 0; i--) {
       if (colidiu(lasers[i].x, lasers[i].y, 20, alien.x, alien.y, alien.tamanho)) {
         lasers.splice(i, 1);
+        explosoes.push({ x: alien.x, y: alien.y, frame: 0 });
         resetarAlien(alien);
         score += 2;
+        atualizarDificuldade();
         break;
       }
     }
@@ -333,7 +404,8 @@ function colidiu(x1, y1, tamanho1, x2, y2, tamanho2) {
 
 function resetarAlien(alien) {
   alien.x = random(30, width - 30);
-  alien.y = random(-200, -40);
+  alien.y = random(-height * 0.8, -height * 0.15);
+  alien.tipo = floor(random(imgAliens.length));
 }
 
 function finalizarJogo() {
@@ -357,11 +429,13 @@ function finalizarJogo() {
 function reiniciarJogo() {
   gameState = "jogando";
   score = 0;
+  resetarDificuldade();
   salvouPontuacao = false;
   lasers = [];
+  explosoes = [];
 
-  nave.x = 200;
-  nave.y = 340;
+  nave.x = width / 2;
+  nave.y = height * 0.85;
 
   criarAliens();
 
@@ -396,12 +470,14 @@ function carregarRanking() {
 function novoJogador() {
   gameState = "inicio";
   score = 0;
+  resetarDificuldade();
   salvouPontuacao = false;
   lasers = [];
+  explosoes = [];
   nomeAtual = "";
 
-  nave.x = 200;
-  nave.y = 340;
+  nave.x = width / 2;
+  nave.y = height * 0.85;
 
   criarAliens();
 
