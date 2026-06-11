@@ -10,7 +10,7 @@ body {
 .fundo-pagina {
   position: fixed;
   inset: 0;
-  background-image: url("assets/fundodapagina.png");
+  background-image: url("./assets/fundodapagina.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
