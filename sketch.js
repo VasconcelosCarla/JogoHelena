@@ -47,6 +47,8 @@ const BG_FRAME_INTERVAL = 3;
 const TIRO_LARGURA = 4;
 const TIRO_ALTURA = 25;
 const TIRO_ESCALA = 1.65;
+const NAVE_TAMANHO = 50;
+const NAVE_ESCALA = 1.5;
 const PONTOS_POR_NIVEL = 10;
 const ALIEN_VELOCIDADE_BONUS = 0.05;
 const ALIEN_VELOCIDADE_BASE = 3;
@@ -310,7 +312,7 @@ function atirarLaser() {
 
 function desenharNave() {
   imageMode(CENTER);
-  image(imgNave, nave.x, nave.y, 50, 50);
+  image(imgNave, nave.x, nave.y, NAVE_TAMANHO * NAVE_ESCALA, NAVE_TAMANHO * NAVE_ESCALA);
   imageMode(CORNER);
 }
 
