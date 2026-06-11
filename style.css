@@ -1,0 +1,151 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #080c14;
+  color: white;
+  text-align: center;
+}
+
+.fundo-pagina {
+  position: fixed;
+  inset: 0;
+  background-image: url("assets/fundodapágina.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  color: #ff8c00;
+}
+
+#statusControle {
+  color: #d1d5db;
+  font-size: 18px;
+}
+
+#telaInicio {
+  background: #111827;
+  padding: 30px;
+  border-radius: 18px;
+  max-width: 480px;
+  margin: 20px auto;
+  border: 3px solid #ff8c00;
+}
+
+#telaInicio h2 {
+  color: #ff8c00;
+}
+
+#game-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+canvas {
+  border: 4px solid #ff8c00;
+  border-radius: 12px;
+  background: black;
+  box-shadow: 0 0 25px rgba(255, 140, 0, 0.4);
+}
+
+.hidden {
+  display: none !important;
+}
+
+input {
+  padding: 18px;
+  width: 85%;
+  border-radius: 12px;
+  border: 3px solid #1d6ed1;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 18px 28px;
+  border: none;
+  border-radius: 12px;
+  background: #ff8c00;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 8px;
+}
+
+button:hover {
+  background: #e67600;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 8, 15, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-content {
+  background: #1f2937;
+  border: 4px solid #ff8c00;
+  padding: 35px;
+  border-radius: 24px;
+  max-width: 560px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(255, 140, 0, 0.45);
+}
+
+.modal-content h2 {
+  color: #ff8c00;
+  font-size: 42px;
+  margin-top: 0;
+}
+
+#mensagemResultado {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+#rankingModal {
+  background: #111827;
+  padding: 20px;
+  border-radius: 16px;
+  margin: 20px 0;
+}
+
+#rankingModal h3 {
+  font-size: 30px;
+  margin-top: 0;
+}
+
+#listaRanking {
+  text-align: left;
+  max-width: 420px;
+  margin: auto;
+  font-size: 21px;
+}
+
+#listaRanking li {
+  padding: 8px;
+  border-bottom: 1px solid #374151;
+}
