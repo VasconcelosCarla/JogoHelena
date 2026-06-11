@@ -50,7 +50,7 @@ const TIRO_ESCALA = 1.65;
 const NAVE_TAMANHO = 50;
 const NAVE_ESCALA = 1.5;
 const PONTOS_POR_NIVEL = 10;
-const ALIEN_VELOCIDADE_BONUS = 0.05;
+const ALIEN_VELOCIDADE_BONUS = 0.4;
 const ALIEN_VELOCIDADE_BASE = 3;
 
 let telaInicio;
