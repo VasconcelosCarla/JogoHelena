@@ -111,6 +111,8 @@ button:hover {
   border-radius: 24px;
   max-width: 560px;
   width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   text-align: center;
   box-shadow: 0 0 35px rgba(255, 140, 0, 0.45);
 }
@@ -131,6 +133,8 @@ button:hover {
   padding: 20px;
   border-radius: 16px;
   margin: 20px 0;
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 #rankingModal h3 {
@@ -148,4 +152,21 @@ button:hover {
 #listaRanking li {
   padding: 8px;
   border-bottom: 1px solid #374151;
+}
+
+.modal-content::-webkit-scrollbar,
+#rankingModal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+#rankingModal::-webkit-scrollbar-track {
+  background: #111827;
+  border-radius: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+#rankingModal::-webkit-scrollbar-thumb {
+  background: #ff8c00;
+  border-radius: 8px;
 }
